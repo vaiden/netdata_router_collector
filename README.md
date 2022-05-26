@@ -1,2 +1,5 @@
-# nedata_sagemcom_collector
-A Netdata module to collect data from a sagemcom router
+# Nedata Sagemcom Collector
+A Netdata module to collect data from a sagemcom router.
+Heavily based on https://github.com/iMicknl/python-sagemcom-api.
+
+Still a WIP due to.
