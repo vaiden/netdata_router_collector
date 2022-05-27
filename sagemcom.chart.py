@@ -9,21 +9,28 @@ from sagemcom_api.client import SagemcomClient
 
 from bases.FrameworkServices.SimpleService import SimpleService
 
-RX = 'o'
-TX = 't'
+RX = 'optical_rx'
+TX = 'optical_tx'
 
 ORDER = [
-    'rxtx',
+    RX,
+    TX
 ]
 
 CHARTS = {
-    'rxtx': {
-        'options': [None, 'GPON', 'dbm', 'GPON', 'GPON', 'line'],
+    RX: {
+        'options': [None, 'GPON - RX', 'dbm', 'GPON', 'GPON', 'line'],
         'lines': [
-            [RX, 'Optical Module Rx Power'],
-            [TX, 'Optical Module Tx Power']
+            [RX, 'Optical Module Rx Power', 'absolute', 1, 1000],
+        ]
+    },
+    TX: {
+        'options': [None, 'GPON - TX', 'dbm', 'GPON', 'GPON', 'line'],
+        'lines': [
+            [TX, 'Optical Module Tx Power', 'absolute', 1, 1000]
         ]
     }
+
 }
 
 
@@ -36,6 +43,7 @@ class Service(SimpleService):
         self.USERNAME = self.configuration.get('USERNAME', "ERROR")
         self.PASSWORD = self.configuration.get('PASSWORD', "ERROR")
         self.ENCRYPTION_METHOD = EncryptionMethod.MD5
+        self.name_captured = False
 
     @staticmethod
     def check():
@@ -59,12 +67,17 @@ class Service(SimpleService):
             except Exception as exception:  # pylint: disable=broad-except
                 data[RX] = 0
                 data[TX] = 0
-                self.debug(exception)
+                self.error(exception)
                 return data
 
-            # Print device information of Sagemcom F@st router
-            device_info = await client.get_device_info()
-            self.debug(f"{device_info.id} {device_info.model_name}")
+            if not self.name_captured:
+                # Print device information of Sagemcom F@st router
+                device_info = await client.get_device_info()
+                self.debug(f"Old name: {CHARTS[RX]['options'][3]}")
+                self.debug(f"{device_info.id} {device_info.model_name}")
+                self.charts[RX].update(self, dict(family=device_info.model_name))
+                self.charts[TX].update(self, dict(family=device_info.model_name))
+                self.name_captured = False
 
             # # Print connected devices
             # devices = await client.get_hosts()
