@@ -45,7 +45,7 @@ class Service(SimpleService):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         ret_val = loop.run_until_complete(asyncio.gather(*jobs))[0]
-        print("ret_val={ret_val}".format(**vars()))
+        self.debug("ret_val={ret_val}".format(**vars()))
         loop.close()
         return ret_val
 
@@ -53,18 +53,18 @@ class Service(SimpleService):
         data = dict()
 
         async with SagemcomClient(self.HOST, self.USERNAME, self.PASSWORD, self.ENCRYPTION_METHOD) as client:
-            print("Starting sagemcom client ")
+            self.debug("Starting sagemcom client ")
             try:
                 await client.login()
             except Exception as exception:  # pylint: disable=broad-except
                 data[RX] = 0
                 data[TX] = 0
-                print(exception)
+                self.debug(exception)
                 return data
 
             # Print device information of Sagemcom F@st router
             device_info = await client.get_device_info()
-            print(f"{device_info.id} {device_info.model_name}")
+            self.debug(f"{device_info.id} {device_info.model_name}")
 
             # # Print connected devices
             # devices = await client.get_hosts()
@@ -79,12 +79,12 @@ class Service(SimpleService):
 
             optical_signal_level = int(
                 await client.get_value_by_xpath("Device/Optical/Interfaces/Interface[@uid='1']/OpticalSignalLevel"))
-            print(optical_signal_level)
+            self.debug(optical_signal_level)
             data[RX] = optical_signal_level
 
             transmit_optical_level = int(
                 await client.get_value_by_xpath("Device/Optical/Interfaces/Interface[@uid='1']/TransmitOpticalLevel"))
-            print(transmit_optical_level)
+            self.debug(transmit_optical_level)
             data[TX] = transmit_optical_level
 
             await client.close()
@@ -95,5 +95,5 @@ class Service(SimpleService):
             return data
 
     def get_data(self):
-        print("get_data")
+        self.debug("get_data")
         return self.run_async([self.poll_sagemcom()])
