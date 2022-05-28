@@ -13,7 +13,8 @@ CONNECTED = 'connected_devices'
 
 ORDER = [
     CPU,
-    DATA
+    DATA,
+    CONNECTED
 ]
 
 CHARTS = {
