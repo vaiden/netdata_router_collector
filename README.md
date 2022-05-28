@@ -23,7 +23,7 @@ $ sudo ./edit-config python.d/xiaomi.conf
 Add this to your `netdata.conf`:
 ```yaml
 [plugins]
-  python.d = yes
+	python.d = yes
 
 [plugin:python.d]
 	command options = -ppython3
