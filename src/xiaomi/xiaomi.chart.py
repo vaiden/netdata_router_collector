@@ -79,7 +79,7 @@ class Service(SimpleService):
         data[CPU] = values["cpu"]["load"]/values["cpu"]["core"] * 100 * 100
         data['received'] = values["wan"]["download"]
         data['sent'] = values["wan"]["upload"]
-        data['connected'] = values["count"]["online"]
+        data[CONNECTED] = values["count"]["online"]
         self.debug("ret_val={data}".format(**vars()))
         return data
 
