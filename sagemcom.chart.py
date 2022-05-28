@@ -11,10 +11,14 @@ from bases.FrameworkServices.SimpleService import SimpleService
 
 RX = 'optical_rx'
 TX = 'optical_tx'
+CPU = 'cpu_usage'
+DATA = 'data_usage'
 
 ORDER = [
     RX,
-    TX
+    TX,
+    CPU,
+    DATA
 ]
 
 CHARTS = {
@@ -28,6 +32,19 @@ CHARTS = {
         'options': [None, 'GPON - TX', 'dbm', 'GPON', 'GPON', 'line'],
         'lines': [
             [TX, 'Optical Module Tx Power', 'absolute', 1, 1000]
+        ]
+    },
+    CPU: {
+        'options': [None, 'CPU Usage', 'percentage', 'CPU', 'CPU', 'area'],
+        'lines': [
+            [CPU, 'Total CPU', 'absolute', 1, 1]
+        ]
+    },
+    DATA: {
+        'options': [None, 'WAN Data Usage', 'GB', 'Data Usage', 'Data', 'stacked'],
+        'lines': [
+            ['received', 'Received', 'absolute', 1, 1024 * 1024 * 1024],
+            ['sent', 'Sent', 'absolute', 1, 1024 * 1024 * 1024]
         ]
     }
 
@@ -77,7 +94,7 @@ class Service(SimpleService):
                 self.debug(f"{device_info.id} {device_info.model_name}")
                 self.charts[RX].update(self, dict(family=device_info.model_name))
                 self.charts[TX].update(self, dict(family=device_info.model_name))
-                self.name_captured = False
+                self.name_captured = True
 
             # # Print connected devices
             # devices = await client.get_hosts()
@@ -99,6 +116,15 @@ class Service(SimpleService):
                 await client.get_value_by_xpath("Device/Optical/Interfaces/Interface[@uid='1']/TransmitOpticalLevel"))
             self.debug(transmit_optical_level)
             data[TX] = transmit_optical_level
+
+            cpu_usage = await client.get_value_by_xpath("Device/DeviceInfo/ProcessStatus/CPUUsage")
+            self.debug(cpu_usage)
+            data[CPU] = cpu_usage
+
+            data_usage = await client.get_value_by_xpath("Device/IP/Interfaces/Interface[@uid='2']/Stats")
+            data['received'] = data_usage['stats']['bytes_received']
+            data['sent'] = data_usage['stats']['bytes_sent']
+            self.debug(data_usage['stats'])
 
             await client.close()
             # Set value via XPath notation
