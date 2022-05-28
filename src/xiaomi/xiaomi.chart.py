@@ -65,7 +65,7 @@ class Service(SimpleService):
         data = dict()
 
         miwifi = pymiwifi.MiWiFi(f"http://{self.HOST}/")
-        miwifi.login('HellOnXiaomi1')
+        miwifi.login(self.PASSWORD)
         values = miwifi.status()
 
         if not self.name_captured:
