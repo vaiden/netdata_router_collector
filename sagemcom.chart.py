@@ -41,10 +41,10 @@ CHARTS = {
         ]
     },
     DATA: {
-        'options': [None, 'WAN Data Usage', 'GB', 'Data Usage', 'Data', 'stacked'],
+        'options': [None, 'WAN Data Usage', 'MB', 'Data Usage', 'Data', 'area'],
         'lines': [
-            ['received', 'Received', 'absolute', 1, 1024 * 1024 * 1024],
-            ['sent', 'Sent', 'absolute', 1, 1024 * 1024 * 1024]
+            ['received', 'Received', 'incremental', 1, 1024 * 1024],
+            ['sent', 'Sent', 'incremental', -1, 1024 * 1024]
         ]
     }
 
