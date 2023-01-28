@@ -1,4 +1,4 @@
-# Nedata Router Collector
+# Netdata Router Collector
 A collection of Netdata collectors for different routers.
 Currently supported:
 - Sagemcom F@ST (full list on [python-sagemcom-api](https://github.com/iMicknl/python-sagemcom-api](https://github.com/iMicknl/python-sagemcom-api#supported-devices))).
